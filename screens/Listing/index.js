@@ -1,90 +1,97 @@
 import React, {useState} from 'react';
-import {Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import styles from './styles';
-import {RadioButton} from 'react-native-paper';
+import {ReactNativeModal} from 'react-native-modal';
 
 const Listing = () => {
-  const [checked, setChecked] = useState('first');
-  const [fname, setFname] = useState('');
-  const [lname, setLname] = useState('');
-  const [email, setEmail] = useState('');
-  const [age, setAge] = useState('');
+  const [results, setResults] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState();
+  const arrayUsers = [];
 
-  const onClickAddData = async () => {
-    console.log('clicked in');
-    await firestore()
-      .collection('Travel')
-      .add({
-        Fastname: fname,
-        Lastname: lname,
-        email: email,
-        gender: checked === 'first' ? 'Male' : 'Female',
-        age: age,
-      })
-      .then(() => {
-        console.log('User added!');
-        setFname('');
-        setLname('');
-        setEmail('');
-        setAge('');
-      });
+  const onFetchUsers = async () => {
+    const result = await firestore().collection('travel1').get();
+    await Promise.all(
+      result?.docs.map(async doc => {
+        const data = await doc?.data();
+        //console.log(typeof data);
+        arrayUsers.push({data});
+      }),
+    );
+    setResults(arrayUsers);
+    console.log('results', arrayUsers[1]?.data?.Fastname);
 
-    console.log('clicked out');
+    //console.log('Data', result?.docs[0]?.data());
+  };
+
+  const onModalOpen = ({item}) => {
+    setSelectedItem(item);
+    setModalOpen(true);
+  };
+  const onRenderUsers = ({item}) => {
+    return (
+      <TouchableOpacity
+        style={styles.userContainer}
+        onPress={() => onModalOpen({item})}>
+        <Text style={styles.userDataText}>
+          First Name : {item.data.Fastname}
+        </Text>
+        <Text style={styles.userDataText}>Last Name: {item.data.Lastname}</Text>
+        <Text style={styles.userDataText}>Age: {item.data.age}</Text>
+        <Text style={styles.userDataText}>Email: {item.data.email}</Text>
+        <Text style={styles.userDataText}>Gender: {item.data.gender}</Text>
+      </TouchableOpacity>
+    );
   };
 
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.addTitle}> Add Data </Text>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.addInputText}
-          placeholder="First name"
-          value={fname}
-          onChangeText={value => setFname(value)}
-        />
-        <TextInput
-          style={styles.addInputText}
-          placeholder="Last  name"
-          value={lname}
-          onChangeText={value => setLname(value)}
-        />
-        <TextInput
-          style={styles.addInputText}
-          placeholder="Your Email"
-          value={email}
-          onChangeText={value => setEmail(value)}
-        />
-        <View style={styles.radioContainer}>
-          <View>
-            <RadioButton
-              value="first"
-              status={checked === 'first' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('first')}
-            />
-            <Text style={styles.genderText}>Male</Text>
-          </View>
-          <View>
-            <RadioButton
-              value="second"
-              status={checked === 'second' ? 'checked' : 'unchecked'}
-              onPress={() => setChecked('second')}
-            />
-            <Text style={styles.genderText}>Female</Text>
-          </View>
-        </View>
-        <TextInput
-          type="number"
-          style={styles.addInputText}
-          placeholder="Age"
-          value={age}
-          onChangeText={value => setAge(value)}
-        />
-      </View>
-      <TouchableOpacity onPress={onClickAddData} style={styles.addButton}>
-        <Text style={styles.buttonText}>Add Data</Text>
+      <Text style={styles.listTitle}>Users Details</Text>
+      <TouchableOpacity style={styles.fetchButton} onPress={onFetchUsers}>
+        <Text style={styles.fetchButtonText}>Fetch List</Text>
       </TouchableOpacity>
+      <FlatList
+        data={results}
+        renderItem={onRenderUsers}
+        keyExtractor={item => item.email}
+      />
+
+      <ReactNativeModal
+        animationIn="slideInRight"
+        animationOut="slideOutLeft"
+        animationOutTiming={2000}
+        isVisible={modalOpen}
+        hasBackdrop={true}
+        coverScreen={true}
+        onBackButtonPress={() => setModalOpen(false)}
+        backdropColor={'black'}
+        backdropOpacity={0.5}>
+        <View style={styles.userDeleteModal}>
+          <Text style={styles.userDataText}>
+            First Name : {selectedItem?.data.Fastname}
+          </Text>
+          <Text style={styles.userDataText}>
+            Last Name: {selectedItem?.data.Lastname}
+          </Text>
+          <Text style={styles.userDataText}>
+            Age : {selectedItem?.data.age}
+          </Text>
+          <Text style={styles.userDataText}>
+            Email: {selectedItem?.data.email}
+          </Text>
+          <Text style={styles.userDataText}>
+            Gender: {selectedItem?.data.gender}
+          </Text>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setModalOpen(false)}>
+            <Text style={styles.modalBtnText}>Delete </Text>
+          </TouchableOpacity>
+        </View>
+      </ReactNativeModal>
     </View>
   );
 };
+
 export default Listing;

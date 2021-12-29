@@ -1,15 +1,10 @@
 import React from 'react';
-import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
+import {DrawerContentScrollView} from '@react-navigation/drawer';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import img from '../../assests/images/img.png';
 import styles from './styles';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Entypo from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import DrawerItems from './DrawerItems';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {AppStyles} from '../../themes';
 
 const CustomDrawer = props => {
@@ -41,20 +36,20 @@ const CustomDrawer = props => {
             onPress={() => navigation.navigate('Profile')}
           />
           <DrawerItems
-            title={'My Listings'}
+            title={'Add Users'}
             type="Entypo"
             iconName="list"
             size={24}
             color={AppStyles.colorSet.black}
-            onPress={() => navigation.navigate('Listing')}
+            onPress={() => navigation.navigate('AddUsers')}
           />
           <DrawerItems
-            title={'Forums'}
+            title={'Listing'}
             type="MaterialIcons"
             iconName="forum"
             size={24}
             color={AppStyles.colorSet.black}
-            onPress={() => {}}
+            onPress={() => navigation.navigate('Listing')}
           />
           <DrawerItems
             title={'Like'}
