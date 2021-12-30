@@ -9,9 +9,11 @@ import {
 import firestore from '@react-native-firebase/firestore';
 import {RadioButton} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 import styles from './styles';
 import {AppStyles} from '../../themes';
+import ageData from '../../assests/data/ageData';
 
 const AddUsers = () => {
   const [checked, setChecked] = useState('');
@@ -20,6 +22,7 @@ const AddUsers = () => {
   const [email, setEmail] = useState('');
   const [age, setAge] = useState('');
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const [fnameError, setFnameError] = useState('');
   const [lnameError, setLnameError] = useState('');
@@ -141,12 +144,16 @@ const AddUsers = () => {
           </View>
         </View>
         {!checked && <Text style={styles.errorText}>{genderError}</Text>}
-        <TextInput
-          type="number"
-          style={styles.addInputText}
-          placeholder="Age"
-          value={age}
-          onChangeText={onChangeAge}
+
+        <DropDownPicker
+          renderListItem={ageData}
+          setOpen={setOpen}
+          open={open}
+          style={styles.dropDownPicker}
+          containerStyle={{width: '90%'}}
+          dropDownContainerStyle={styles.dropDownContainer}
+          dropDownDirection="Top"
+          setitems={ageData.label}
         />
         {!age && <Text style={styles.errorText}>{ageError}</Text>}
       </View>

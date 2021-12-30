@@ -44,9 +44,9 @@ export default StyleSheet.create({
   },
   userDeleteModal: {
     justifyContent: 'center',
-    backgroundColor: AppStyles.colorSet.white,
     borderRadius: MetricsMod.twenty,
     marginHorizontal: MetricsMod.twenty,
+    backgroundColor: AppStyles.colorSet.grey,
     shadowColor: 'white',
     shadowOffset: {
       width: 0,
@@ -55,23 +55,29 @@ export default StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    padding: 10,
   },
   deleteButton: {
     alignItems: 'center',
-    backgroundColor: AppStyles.colorSet.blue,
     marginHorizontal: MetricsMod.twenty,
-    padding: MetricsMod.twelve,
     marginVertical: MetricsMod.six,
     borderRadius: MetricsMod.six,
   },
   modalBtnText: {
-    color: AppStyles.colorSet.white,
     fontFamily: AppStyles.fontFamily.latoBold,
     fontSize: AppStyles.fontSet.normal,
   },
   buttonContainer: {
-    flexDirection: 'row',
     marginLeft: MetricsMod.twenty,
+  },
+  threeDotsMenu: {
+    alignSelf: 'flex-end',
+    marginRight: MetricsMod.six,
+  },
+  modalContainer: {
+    marginLeft: 120,
+    marginBottom: MetricsMod.twoFifty,
+  },
+  modalContainer1: {
+    flex: 1,
   },
 });

@@ -56,4 +56,19 @@ export default StyleSheet.create({
     marginHorizontal: MetricsMod.twenty,
   },
   radioButton: {},
+  dropDownPicker: {
+    marginHorizontal: MetricsMod.twenty,
+    borderRadius: 3,
+    padding: MetricsMod.nine,
+    borderWidth: 0,
+    backgroundColor: AppStyles.colorSet.lightSilver,
+  },
+  dropDownContainer: {
+    marginHorizontal: MetricsMod.twenty,
+    borderWidth: 0,
+    paddingVertical: 4,
+    backgroundColor: AppStyles.colorSet.white,
+    elevation: 5,
+    height: 100,
+  },
 });

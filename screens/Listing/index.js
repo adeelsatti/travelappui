@@ -12,6 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 
 import styles from './styles';
 import {AppStyles} from '../../themes';
+import VectorIconComponents from '../../components/VectorIconComponents';
 
 const Listing = () => {
   const navigation = useNavigation();
@@ -21,7 +22,7 @@ const Listing = () => {
   const [loading, setLoading] = useState(false);
   const arrayUsers = [];
 
-  useEffect(async () => {
+  const FetchUser = async () => {
     setLoading(true);
     const result = await firestore().collection('travel1').get();
     await Promise.all(
@@ -30,12 +31,15 @@ const Listing = () => {
         //console.log(typeof data);
         arrayUsers.push({data});
       }),
+      setResults(arrayUsers),
+      setLoading(false),
     );
-    setResults(arrayUsers);
-    setLoading(false);
+  };
+  useEffect(() => {
+    FetchUser();
   }, []);
 
-  const onAddUser = () => {
+  const onAddUser = async () => {
     navigation.navigate('AddUsers');
   };
 
@@ -57,9 +61,18 @@ const Listing = () => {
 
   const onRenderUsers = ({item}) => {
     return (
-      <TouchableOpacity
-        style={styles.userContainer}
-        onPress={() => onModalOpen({item})}>
+      <View style={styles.userContainer}>
+        <TouchableOpacity
+          style={styles.threeDotsMenu}
+          onPress={() => onModalOpen({item})}>
+          <VectorIconComponents
+            type="Entypo"
+            name="dots-three-vertical"
+            size={24}
+            color={AppStyles.colorSet.grey}
+          />
+        </TouchableOpacity>
+
         <Text style={styles.userDataText}>
           First Name : {item.data.FirstName}
         </Text>
@@ -69,7 +82,7 @@ const Listing = () => {
         <Text style={styles.userDataText}>Age : {item.data.age}</Text>
         <Text style={styles.userDataText}>Email : {item.data.email}</Text>
         <Text style={styles.userDataText}>Gender : {item.data.gender}</Text>
-      </TouchableOpacity>
+      </View>
     );
   };
 
@@ -80,11 +93,7 @@ const Listing = () => {
           <View>
             <ActivityIndicator size="large" color={AppStyles.colorSet.pink} />
           </View>
-        ) : (
-          <View>
-            <Text>Not Found</Text>
-          </View>
-        )}
+        ) : null}
       </>
     );
   };
@@ -103,19 +112,16 @@ const Listing = () => {
         keyExtractor={item => item.email}
         ListEmptyComponent={emptyComponent}
       />
-
-      <ReactNativeModal
-        animationIn="slideInRight"
-        animationOut="slideOutLeft"
-        animationOutTiming={2000}
-        isVisible={modalOpen}
-        hasBackdrop={true}
-        coverScreen={true}
-        onBackButtonPress={() => setModalOpen(false)}
-        backdropColor={'black'}
-        backdropOpacity={0.5}>
-        <View style={styles.userDeleteModal}>
-          <Text style={styles.userDataText}>
+      <View style={styles.modalContainer1}>
+        <ReactNativeModal
+          isVisible={modalOpen}
+          style={styles.modalContainer}
+          hasBackdrop={true}
+          coverScreen={true}
+          backdropOpacity={0.5}
+          backdropColor={'black'}>
+          <View style={styles.userDeleteModal}>
+            {/*<Text style={styles.userDataText}>
             First Name : {selectedItem?.data.FirstName}
           </Text>
           <Text style={styles.userDataText}>
@@ -130,22 +136,23 @@ const Listing = () => {
           <Text style={styles.userDataText}>
             Gender: {selectedItem?.data.gender}
           </Text>
+*/}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => setModalOpen(false)}>
+                <Text style={styles.modalBtnText}>Delete </Text>
+              </TouchableOpacity>
 
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => setModalOpen(false)}>
-              <Text style={styles.modalBtnText}>Delete </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => setModalOpen(false)}>
-              <Text style={styles.modalBtnText}>Update </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => setModalOpen(false)}>
+                <Text style={styles.modalBtnText}>Update </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ReactNativeModal>
+        </ReactNativeModal>
+      </View>
     </View>
   );
 };
