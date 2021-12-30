@@ -70,4 +70,8 @@ export default StyleSheet.create({
     fontFamily: AppStyles.fontFamily.latoBold,
     fontSize: AppStyles.fontSet.normal,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    marginLeft: MetricsMod.twenty,
+  },
 });

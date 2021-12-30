@@ -1,16 +1,28 @@
-import React, {useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import styles from './styles';
 import {ReactNativeModal} from 'react-native-modal';
+import {useNavigation} from '@react-navigation/native';
+
+import styles from './styles';
+import {AppStyles} from '../../themes';
 
 const Listing = () => {
+  const navigation = useNavigation();
   const [results, setResults] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState();
+  const [loading, setLoading] = useState(false);
   const arrayUsers = [];
 
-  const onFetchUsers = async () => {
+  useEffect(async () => {
+    setLoading(true);
     const result = await firestore().collection('travel1').get();
     await Promise.all(
       result?.docs.map(async doc => {
@@ -20,41 +32,76 @@ const Listing = () => {
       }),
     );
     setResults(arrayUsers);
-    console.log('results', arrayUsers[1]?.data?.Fastname);
+    setLoading(false);
+  }, []);
 
-    //console.log('Data', result?.docs[0]?.data());
+  const onAddUser = () => {
+    navigation.navigate('AddUsers');
   };
 
   const onModalOpen = ({item}) => {
     setSelectedItem(item);
     setModalOpen(true);
   };
+
+  const onDeleteUser = async () => {
+    await firestore()
+      .collection('travel1')
+      .doc('1DRU4a806br0Jcfnl2i4')
+      .delete()
+      .then(() => {
+        console.log('User deleted!');
+      });
+    setModalOpen(false);
+  };
+
   const onRenderUsers = ({item}) => {
     return (
       <TouchableOpacity
         style={styles.userContainer}
         onPress={() => onModalOpen({item})}>
         <Text style={styles.userDataText}>
-          First Name : {item.data.Fastname}
+          First Name : {item.data.FirstName}
         </Text>
-        <Text style={styles.userDataText}>Last Name: {item.data.Lastname}</Text>
-        <Text style={styles.userDataText}>Age: {item.data.age}</Text>
-        <Text style={styles.userDataText}>Email: {item.data.email}</Text>
-        <Text style={styles.userDataText}>Gender: {item.data.gender}</Text>
+        <Text style={styles.userDataText}>
+          Last Name : {item.data.LastName}
+        </Text>
+        <Text style={styles.userDataText}>Age : {item.data.age}</Text>
+        <Text style={styles.userDataText}>Email : {item.data.email}</Text>
+        <Text style={styles.userDataText}>Gender : {item.data.gender}</Text>
       </TouchableOpacity>
+    );
+  };
+
+  const emptyComponent = () => {
+    return (
+      <>
+        {loading ? (
+          <View>
+            <ActivityIndicator size="large" color={AppStyles.colorSet.pink} />
+          </View>
+        ) : (
+          <View>
+            <Text>Not Found</Text>
+          </View>
+        )}
+      </>
     );
   };
 
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.listTitle}>Users Details</Text>
-      <TouchableOpacity style={styles.fetchButton} onPress={onFetchUsers}>
-        <Text style={styles.fetchButtonText}>Fetch List</Text>
+
+      <TouchableOpacity style={styles.fetchButton} onPress={onAddUser}>
+        <Text style={styles.fetchButtonText}>Add User</Text>
       </TouchableOpacity>
+
       <FlatList
         data={results}
         renderItem={onRenderUsers}
         keyExtractor={item => item.email}
+        ListEmptyComponent={emptyComponent}
       />
 
       <ReactNativeModal
@@ -69,10 +116,10 @@ const Listing = () => {
         backdropOpacity={0.5}>
         <View style={styles.userDeleteModal}>
           <Text style={styles.userDataText}>
-            First Name : {selectedItem?.data.Fastname}
+            First Name : {selectedItem?.data.FirstName}
           </Text>
           <Text style={styles.userDataText}>
-            Last Name: {selectedItem?.data.Lastname}
+            Last Name: {selectedItem?.data.LastName}
           </Text>
           <Text style={styles.userDataText}>
             Age : {selectedItem?.data.age}
@@ -83,11 +130,20 @@ const Listing = () => {
           <Text style={styles.userDataText}>
             Gender: {selectedItem?.data.gender}
           </Text>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={() => setModalOpen(false)}>
-            <Text style={styles.modalBtnText}>Delete </Text>
-          </TouchableOpacity>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => setModalOpen(false)}>
+              <Text style={styles.modalBtnText}>Delete </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => setModalOpen(false)}>
+              <Text style={styles.modalBtnText}>Update </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ReactNativeModal>
     </View>

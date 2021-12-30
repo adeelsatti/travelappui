@@ -1,9 +1,17 @@
 import React, {useState} from 'react';
-import {Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import styles from './styles';
 import {RadioButton} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
+
+import styles from './styles';
+import {AppStyles} from '../../themes';
 
 const AddUsers = () => {
   const [checked, setChecked] = useState('');
@@ -11,6 +19,7 @@ const AddUsers = () => {
   const [lname, setLname] = useState('');
   const [email, setEmail] = useState('');
   const [age, setAge] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const [fnameError, setFnameError] = useState('');
   const [lnameError, setLnameError] = useState('');
@@ -19,34 +28,45 @@ const AddUsers = () => {
   const [ageError, setAgeError] = useState('');
 
   const navigation = useNavigation();
+  let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
   const validateAddForm = () => {
-    if (fname === '') {
+    if (!fname?.trim()?.length) {
       setFnameError('Enter First Name');
-    } else if (lname === '') {
+    }
+    if (!lname?.trim()?.length) {
       setLnameError('Enter Last Name');
-    } else if (email === '') {
+    }
+    if (!email?.trim()?.length) {
       setEmailError('Enter Email');
-    } else if (email !== '') {
-      console.log(email);
-      let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-      if (reg.test(email) === false) {
-        console.log('Email is Not Correct');
-        setEmailError('incorrect email');
-      } else {
-        setEmailError('');
-        if (checked === '') {
-          setGenderError('Select Gender');
-        } else if (age === '') {
-          setAgeError('Enter Age');
-        } else {
-          onAddData();
-        }
-      }
+    }
+    if (email?.trim()?.length && !reg.test(email)) {
+      console.log(!reg.test(email));
+      setEmailError('incorrect email');
+    }
+    if (email?.trim()?.length && reg.test(email)) {
+      setEmailError('');
+    }
+    if (!checked?.trim()?.length) {
+      setGenderError('Select Gender');
+    }
+    if (!age?.trim()?.length) {
+      setAgeError('Enter Age');
+    }
+    if (
+      fname.trim().length &&
+      lname.trim().length &&
+      email.trim().length &&
+      checked.trim().length &&
+      age.trim().length
+    ) {
+      onAddData();
     }
   };
   const onAddData = async () => {
     console.log('clicked in');
+    setLoading(true);
+
     await firestore().collection('travel1').add({
       FirstName: fname,
       LastName: lname,
@@ -55,24 +75,29 @@ const AddUsers = () => {
       age: age,
     });
     console.log('clicked out');
+    setLoading(false);
     navigation.navigate('Listing');
   };
 
   const onChangeFname = values => {
     setFname(values);
   };
+
   const onChangeLname = values => {
     setLname(values);
   };
+
   const onChangeEmail = values => {
     setEmail(values);
   };
+
   const onChangeAge = values => {
     setAge(values);
   };
+
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.addTitle}> Add Data </Text>
+      <Text style={styles.addTitle}> Add User </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.addInputText}
@@ -80,21 +105,21 @@ const AddUsers = () => {
           value={fname}
           onChangeText={onChangeFname}
         />
-        {fname === '' && <Text style={styles.errorText}>{fnameError}</Text>}
+        {!fname && <Text style={styles.errorText}>{fnameError}</Text>}
         <TextInput
           style={styles.addInputText}
           placeholder="Last  name"
           value={lname}
           onChangeText={onChangeLname}
         />
-        {lname === '' && <Text style={styles.errorText}>{lnameError}</Text>}
+        {!lname && <Text style={styles.errorText}>{lnameError}</Text>}
         <TextInput
           style={styles.addInputText}
           placeholder="Your Email"
           value={email}
           onChangeText={onChangeEmail}
         />
-        {(email === '' || email !== '') && (
+        {(!email || !reg.test.email) && (
           <Text style={styles.errorText}>{emailError}</Text>
         )}
         <View style={styles.radioContainer}>
@@ -115,7 +140,7 @@ const AddUsers = () => {
             <Text style={styles.genderText}>Female</Text>
           </View>
         </View>
-        {checked === '' && <Text style={styles.errorText}>{genderError}</Text>}
+        {!checked && <Text style={styles.errorText}>{genderError}</Text>}
         <TextInput
           type="number"
           style={styles.addInputText}
@@ -123,10 +148,16 @@ const AddUsers = () => {
           value={age}
           onChangeText={onChangeAge}
         />
-        {age === '' && <Text style={styles.errorText}>{ageError}</Text>}
+        {!age && <Text style={styles.errorText}>{ageError}</Text>}
       </View>
       <TouchableOpacity onPress={validateAddForm} style={styles.addButton}>
-        <Text style={styles.buttonText}>Add Data</Text>
+        {loading ? (
+          <View>
+            <ActivityIndicator size="small" color={AppStyles.colorSet.pink} />
+          </View>
+        ) : (
+          <Text style={styles.buttonText}>Add Data</Text>
+        )}
       </TouchableOpacity>
     </View>
   );

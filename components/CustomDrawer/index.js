@@ -2,6 +2,7 @@ import React from 'react';
 import {DrawerContentScrollView} from '@react-navigation/drawer';
 import {Image, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+
 import img from '../../assests/images/img.png';
 import styles from './styles';
 import DrawerItems from './DrawerItems';
@@ -9,6 +10,7 @@ import {AppStyles} from '../../themes';
 
 const CustomDrawer = props => {
   const navigation = useNavigation();
+
   return (
     <DrawerContentScrollView style={styles.mainContainer} {...props}>
       <View style={styles.mainContainer}>
@@ -36,12 +38,12 @@ const CustomDrawer = props => {
             onPress={() => navigation.navigate('Profile')}
           />
           <DrawerItems
-            title={'Add Users'}
+            title={'Users'}
             type="Entypo"
             iconName="list"
             size={24}
             color={AppStyles.colorSet.black}
-            onPress={() => navigation.navigate('AddUsers')}
+            onPress={() => navigation.navigate('Listing')}
           />
           <DrawerItems
             title={'Listing'}
@@ -49,7 +51,7 @@ const CustomDrawer = props => {
             iconName="forum"
             size={24}
             color={AppStyles.colorSet.black}
-            onPress={() => navigation.navigate('Listing')}
+            onPress={() => {}}
           />
           <DrawerItems
             title={'Like'}
