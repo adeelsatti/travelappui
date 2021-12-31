@@ -12,6 +12,7 @@ import {useNavigation} from '@react-navigation/native';
 import styles from './styles';
 import {AppStyles} from '../../themes';
 import DotMenuComponent from '../../components/DotMenuComponent';
+import ListFooterComponent from '../../components/ListFooterComponent';
 
 const Listing = () => {
   const navigation = useNavigation();
@@ -93,50 +94,9 @@ const Listing = () => {
         renderItem={onRenderUsers}
         keyExtractor={(item, index) => item?.email || index}
         ListEmptyComponent={emptyComponent}
-        //ListFooterComponent={<ListFooterComponent />}
-        //ListHeaderComponent={<ListHeaderComponent />}
+        ListFooterComponent={<ListFooterComponent />}
+        //ListHeaderComponent={ListHeaderComponent}
       />
-      <View style={styles.modalContainer1}>
-        {/*<ReactNativeModal
-            isVisible={modalOpen}
-            style={styles.modalContainer}
-            hasBackdrop={true}
-            coverScreen={true}
-            backdropOpacity={0.5}
-            backdropColor={'black'}>
-            <View style={styles.userDeleteModal}>
-              <Text style={styles.userDataText}>
-            First Name : {selectedItem?.data.FirstName}
-          </Text>
-          <Text style={styles.userDataText}>
-            Last Name: {selectedItem?.data.LastName}
-          </Text>
-          <Text style={styles.userDataText}>
-            Age : {selectedItem?.data.age}
-          </Text>
-          <Text style={styles.userDataText}>
-            Email: {selectedItem?.data.email}
-          </Text>
-          <Text style={styles.userDataText}>
-            Gender: {selectedItem?.data.gender}
-          </Text>
-
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => setModalOpen(false)}>
-                  <Text style={styles.modalBtnText}>Delete </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => setModalOpen(false)}>
-                  <Text style={styles.modalBtnText}>Update </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ReactNativeModal>*/}
-      </View>
     </View>
   );
 };

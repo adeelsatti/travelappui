@@ -16,7 +16,6 @@ const Details = ({route, navigation}) => {
   const {item} = route.params;
   const [colorChange, setColorChange] = useState(AppStyles.colorSet.silverII);
 
-  console.log(route.params.item);
   const handleHeartClick = () => {
     if (colorChange === AppStyles.colorSet.silverII) {
       setColorChange(colors.orange);

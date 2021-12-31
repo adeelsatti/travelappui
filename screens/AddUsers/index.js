@@ -44,7 +44,6 @@ const AddUsers = () => {
       setEmailError('Enter Email');
     }
     if (email?.trim()?.length && !reg.test(email)) {
-      console.log(!reg.test(email));
       setEmailError('incorrect email');
     }
     if (email?.trim()?.length && reg?.test(email)) {
@@ -67,7 +66,6 @@ const AddUsers = () => {
     }
   };
   const onAddData = async () => {
-    console.log('clicked in');
     setLoading(true);
 
     await firestore()?.collection('travel1')?.add({
@@ -77,7 +75,6 @@ const AddUsers = () => {
       gender: checked,
       age: age,
     });
-    console.log('clicked out');
     setLoading(false);
     navigation.navigate('Listing');
   };

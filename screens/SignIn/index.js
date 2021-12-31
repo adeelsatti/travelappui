@@ -25,7 +25,6 @@ const SignIn = () => {
           alert('Password is Invalid');
         }
 
-        console.log(error);
       });
   };
 
