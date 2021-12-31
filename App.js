@@ -13,8 +13,7 @@ import Details from './components/Details';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from './components/CustomDrawer';
 import Listing from './screens/Listing';
-import SignIn from './screens/SignIn';
-import SignUp from './screens/SignUp';
+import AddUsers from './screens/AddUsers';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -90,7 +89,7 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
+        {/*  <Stack.Screen
           name="SignIn"
           component={SignIn}
           options={{headerShown: false}}
@@ -99,7 +98,7 @@ const App = () => {
           name="SignUp"
           component={SignUp}
           options={{headerShown: false}}
-        />
+        />*/}
         <Stack.Screen
           name="TabNavigator"
           component={TabNavigator}
@@ -108,6 +107,11 @@ const App = () => {
         <Stack.Screen
           name="Details"
           component={Details}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="AddUsers"
+          component={AddUsers}
           options={{headerShown: false}}
         />
         <Stack.Screen
