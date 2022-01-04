@@ -24,8 +24,19 @@ const SignIn = () => {
         } else if (error?.code === 'auth/wrong-password') {
           alert('Password is Invalid');
         }
-
       });
+  };
+
+  const onCreateNewAccount = () => {
+    navigation.navigate('SignUp');
+  };
+
+  const onChangePassword = value => {
+    setPassword(value);
+  };
+
+  const onChangeEmail = value => {
+    setEmail(value);
   };
 
   return (
@@ -34,7 +45,7 @@ const SignIn = () => {
         <Image source={logo} alt={'Logo Image'} style={styles.logoImage} />
         <Text style={styles.appTitle}>Travel App</Text>
       </View>
-      <TouchableOpacity style={styles.btnFacebookLogin} onPress={() => {}}>
+      <TouchableOpacity style={styles.btnFacebookLogin}>
         <VectorIconComponents
           name="facebook-square"
           color={AppStyles.colorSet.white}
@@ -48,13 +59,13 @@ const SignIn = () => {
         <TextInput
           placeholder="Email"
           style={styles.usernameInput}
-          onChangeText={value => setEmail(value)}
+          onChangeText={onChangeEmail}
         />
         <TextInput
           placeholder="Password"
           style={styles.usernameInput}
-          secureTextEntry={false}
-          onChangeText={value => setPassword(value)}
+          secureTextEntry={true}
+          onChangeText={onChangePassword}
           maxLength={10}
         />
       </View>
@@ -68,7 +79,7 @@ const SignIn = () => {
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.createNewAccountContainer}
-          onPress={() => navigation.navigate('SignUp')}>
+          onPress={onCreateNewAccount}>
           <Text style={styles.createNewAccount}>Create new account ? </Text>
           <Text style={styles.createAnAccount}>Create an account</Text>
         </TouchableOpacity>

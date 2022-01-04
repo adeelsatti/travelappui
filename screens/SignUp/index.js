@@ -27,7 +27,6 @@ const SignUp = () => {
         } else if (error?.code === 'auth/invalid-email') {
           alert('Email format is invalid!');
         }
-
       });
   }
 
@@ -52,10 +51,12 @@ const SignUp = () => {
         <TextInput
           onChangeText={value => setPassword(value)}
           placeholder="Password"
+          secureTextEntry={true}
           style={styles.usernameInput}
         />
         <TextInput
           placeholder="Confirm Password"
+          secureTextEntry={true}
           style={styles.usernameInput}
         />
       </View>
