@@ -15,7 +15,10 @@ import Details from './components/Details';
 import CustomDrawer from './components/CustomDrawer';
 import Listing from './screens/Listing';
 import AddUsers from './screens/AddUsers';
-import DeleteScreen from './screens/DeleteScreen';
+import UpdateScreen from './screens/UpdateScreen';
+import {MenuProvider} from 'react-native-popup-menu';
+import SignIn from './screens/SignIn';
+import SignUp from './screens/SignUp';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -92,19 +95,19 @@ const App = () => {
   };
 
   return (
-    <>
+    <MenuProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          {/*  <Stack.Screen
-          name="SignIn"
-          component={SignIn}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUp}
-          options={{headerShown: false}}
-        />*/}
+          <Stack.Screen
+            name="SignIn"
+            component={SignIn}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="SignUp"
+            component={SignUp}
+            options={{headerShown: false}}
+          />
           <Stack.Screen
             name="TabNavigator"
             component={TabNavigator}
@@ -126,13 +129,13 @@ const App = () => {
             options={{headerShown: false}}
           />
           <Stack.Screen
-            name="Delete"
-            component={DeleteScreen}
+            name="Update"
+            component={UpdateScreen}
             options={{headerShown: false}}
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </>
+    </MenuProvider>
   );
 };
 

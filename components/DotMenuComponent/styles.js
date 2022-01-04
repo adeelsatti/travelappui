@@ -1,4 +1,4 @@
-import {MetricsMod} from '../../themes';
+import {AppStyles, MetricsMod} from '../../themes';
 import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
@@ -6,11 +6,18 @@ export default StyleSheet.create({
     marginTop: MetricsMod.twenty,
   },
   optionsContainerStyle: {
-    marginTop: -130,
-    padding: 0,
-    borderRadius: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: MetricsMod.nine,
+    width: MetricsMod.hundredThirty,
+    borderRadius: MetricsMod.six,
   },
   menuTrigger: {
-    marginLeft: MetricsMod.sixty,
+    marginLeft: MetricsMod.forty,
+  },
+  menuOption: {
+    fontFamily: AppStyles.fontFamily.latoBold,
+    fontSize: AppStyles.fontSet.medium,
+    color: AppStyles.colorSet.black,
   },
 });

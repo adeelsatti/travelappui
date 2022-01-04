@@ -1,12 +1,16 @@
-import React from 'react';
-import {Text, View} from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
-const ListHeaderComponent = () => {
-  return (
-    <View>
-      <Text>Header</Text>
-    </View>
+const HeaderComponent = ({setLoading, arrayUsers, setResults}) => {
+  setLoading(true);
+  const result = firestore().collection('travel1').get();
+  Promise.all(
+    result?.docs.map(async doc => {
+      const data = await doc?.data();
+      arrayUsers.push({data});
+    }),
+    setResults(arrayUsers),
+    setLoading(false),
   );
 };
 
-export default ListHeaderComponent;
+export default HeaderComponent;

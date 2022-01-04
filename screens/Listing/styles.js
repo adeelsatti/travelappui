@@ -95,4 +95,31 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: AppStyles.colorSet.grey,
   },
+  deleteContainer: {
+    backgroundColor: AppStyles.colorSet.white,
+    borderRadius: MetricsMod.nine,
+  },
+  deleteText: {
+    fontFamily: AppStyles.fontFamily.latoBold,
+    fontSize: AppStyles.fontSet.normal,
+    color: AppStyles.colorSet.white,
+  },
+  confirmDeleteButton: {
+    backgroundColor: AppStyles.colorSet.blue,
+    padding: MetricsMod.nine,
+    borderRadius: 3,
+    marginHorizontal: MetricsMod.nine,
+  },
+  deleteButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: MetricsMod.twenty,
+    paddingVertical: MetricsMod.twenty,
+  },
+  confirmDelete: {
+    fontSize: AppStyles.fontSet.normalI,
+    color: AppStyles.colorSet.black,
+    paddingHorizontal: MetricsMod.thirty,
+    paddingVertical: MetricsMod.twenty,
+  },
 });
