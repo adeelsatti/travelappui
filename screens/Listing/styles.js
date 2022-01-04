@@ -4,12 +4,13 @@ import {AppStyles, MetricsMod} from '../../themes';
 export default StyleSheet.create({
   mainContainer: {
     flex: 1,
-    marginTop: MetricsMod.thirty,
+    backgroundColor: AppStyles.colorSet.white,
   },
   listTitle: {
     fontFamily: AppStyles.fontFamily.latoBold,
     fontSize: AppStyles.fontSet.large,
     color: AppStyles.colorSet.black,
+    marginTop: MetricsMod.thirty,
     alignSelf: 'center',
   },
   fetchButton: {
@@ -35,6 +36,7 @@ export default StyleSheet.create({
     marginTop: MetricsMod.twenty,
   },
   userContainer: {
+    flexDirection: 'row',
     backgroundColor: AppStyles.colorSet.silver,
     marginTop: MetricsMod.twenty,
     marginHorizontal: MetricsMod.twenty,
@@ -69,9 +71,16 @@ export default StyleSheet.create({
   buttonContainer: {
     marginLeft: MetricsMod.twenty,
   },
-  threeDotsMenu: {
-    alignSelf: 'flex-end',
-    marginRight: MetricsMod.six,
+  threeDotsContainer: {
+    flex: 1,
+  },
+  threeDotsButton: {
+    width: 100,
+    height: 200,
+    alignItems: 'center',
+  },
+  textContainer: {
+    width: 270,
   },
   modalContainer: {
     marginLeft: 120,
@@ -79,5 +88,11 @@ export default StyleSheet.create({
   },
   modalContainer1: {
     flex: 1,
+  },
+  PopUp: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: AppStyles.colorSet.grey,
   },
 });

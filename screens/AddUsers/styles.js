@@ -71,4 +71,7 @@ export default StyleSheet.create({
     elevation: 5,
     height: 100,
   },
+  containerWidth: {
+    width: '90%',
+  },
 });

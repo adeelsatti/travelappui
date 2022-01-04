@@ -44,10 +44,9 @@ const AddUsers = () => {
       setEmailError('Enter Email');
     }
     if (email?.trim()?.length && !reg.test(email)) {
-      console.log(!reg.test(email));
       setEmailError('incorrect email');
     }
-    if (email?.trim()?.length && reg.test(email)) {
+    if (email?.trim()?.length && reg?.test(email)) {
       setEmailError('');
     }
     if (!checked?.trim()?.length) {
@@ -57,27 +56,25 @@ const AddUsers = () => {
       setAgeError('Enter Age');
     }
     if (
-      fname.trim().length &&
-      lname.trim().length &&
-      email.trim().length &&
-      checked.trim().length &&
-      age.trim().length
+      fname?.trim()?.length &&
+      lname?.trim()?.length &&
+      email?.trim()?.length &&
+      checked?.trim()?.length &&
+      age?.trim()?.length
     ) {
       onAddData();
     }
   };
   const onAddData = async () => {
-    console.log('clicked in');
     setLoading(true);
 
-    await firestore().collection('travel1').add({
+    await firestore()?.collection('travel1')?.add({
       FirstName: fname,
       LastName: lname,
       email: email,
       gender: checked,
       age: age,
     });
-    console.log('clicked out');
     setLoading(false);
     navigation.navigate('Listing');
   };
@@ -92,10 +89,6 @@ const AddUsers = () => {
 
   const onChangeEmail = values => {
     setEmail(values);
-  };
-
-  const onChangeAge = values => {
-    setAge(values);
   };
 
   return (
@@ -122,7 +115,7 @@ const AddUsers = () => {
           value={email}
           onChangeText={onChangeEmail}
         />
-        {(!email || !reg.test.email) && (
+        {(!email || !reg.test?.email) && (
           <Text style={styles.errorText}>{emailError}</Text>
         )}
         <View style={styles.radioContainer}>
@@ -146,14 +139,14 @@ const AddUsers = () => {
         {!checked && <Text style={styles.errorText}>{genderError}</Text>}
 
         <DropDownPicker
-          renderListItem={ageData}
+          items={ageData}
           setOpen={setOpen}
           open={open}
           style={styles.dropDownPicker}
-          containerStyle={{width: '90%'}}
+          containerStyle={styles.containerWidth}
           dropDownContainerStyle={styles.dropDownContainer}
           dropDownDirection="Top"
-          setitems={ageData.label}
+          setitems={ageData.values}
         />
         {!age && <Text style={styles.errorText}>{ageError}</Text>}
       </View>

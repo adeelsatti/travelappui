@@ -27,7 +27,7 @@ const SignUp = () => {
         } else if (error?.code === 'auth/invalid-email') {
           alert('Email format is invalid!');
         }
-        console.log(error);
+
       });
   }
 

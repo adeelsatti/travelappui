@@ -24,9 +24,6 @@ const Liked = () => {
 
   const [firstname, ...otherInfo] = data;
 
-  console.log('FirstName', firstname);
-  console.log('OtherInfo', otherInfo);
-
   /*  useEffect(() => {
     setLoading(true);
     fetch('http://universities.hipolabs.com/search?country=' + changeText).then(

@@ -2,18 +2,20 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import Icon from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {createDrawerNavigator} from '@react-navigation/drawer';
+
 import Home from './components/Home';
 import Profile from './components/Profile';
 import Liked from './components/Liked';
-import {createNativeStackNavigator} from 'react-native-screens/native-stack';
 import colors from './assests/colors/colors';
-import Icon from 'react-native-vector-icons/Entypo';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Details from './components/Details';
-import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawer from './components/CustomDrawer';
 import Listing from './screens/Listing';
 import AddUsers from './screens/AddUsers';
+import DeleteScreen from './screens/DeleteScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -39,6 +41,7 @@ const App = () => {
             ),
           }}
         />
+
         <Tab.Screen
           name="Liked"
           component={Liked}
@@ -49,6 +52,7 @@ const App = () => {
             ),
           }}
         />
+
         <Tab.Screen
           name="Profile"
           component={Profile}
@@ -75,6 +79,7 @@ const App = () => {
             headerShown: false,
           }}
         />
+
         <Drawer.Screen
           name="Comments"
           component={Home}
@@ -87,9 +92,10 @@ const App = () => {
   };
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        {/*  <Stack.Screen
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {/*  <Stack.Screen
           name="SignIn"
           component={SignIn}
           options={{headerShown: false}}
@@ -99,30 +105,37 @@ const App = () => {
           component={SignUp}
           options={{headerShown: false}}
         />*/}
-        <Stack.Screen
-          name="TabNavigator"
-          component={TabNavigator}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Details"
-          component={Details}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="AddUsers"
-          component={AddUsers}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Listing"
-          component={Listing}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+          <Stack.Screen
+            name="TabNavigator"
+            component={TabNavigator}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Details"
+            component={Details}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="AddUsers"
+            component={AddUsers}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Listing"
+            component={Listing}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Delete"
+            component={DeleteScreen}
+            options={{headerShown: false}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </>
   );
 };
+
 const styles = StyleSheet.create({
   tabBar: {
     backgroundColor: colors.white,

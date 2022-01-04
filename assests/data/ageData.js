@@ -44,6 +44,12 @@ const ageData = [
   {
     label: 31,
   },
+  {
+    label: 32,
+  },
+  {
+    label: 33,
+  },
 ];
 
 export default ageData;
