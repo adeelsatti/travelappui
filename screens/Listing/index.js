@@ -14,8 +14,8 @@ const Listing = () => {
   const [results, setResults] = useState([]);
   const [selectedItem, setSelectedItem] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pullToRefresh, setPullToRefresh] = useState(false);
   const [modal, setModal] = useState(false);
-  const [deleteID, setDeleteID] = useState(false);
   const arrayUsers = [];
 
   const fetchUser = async () => {
@@ -27,9 +27,9 @@ const Listing = () => {
       }),
       setResults(arrayUsers),
     );
+    setPullToRefresh(false);
   };
 
-  //console.log(results)
   useEffect(() => {
     fetchUser();
   }, []);
@@ -45,14 +45,14 @@ const Listing = () => {
       <View style={styles.userContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.userDataText}>
-            First Name : {item.data.FirstName}
+            First Name : {item?.data?.FirstName}
           </Text>
           <Text style={styles.userDataText}>
-            Last Name : {item.data.LastName}
+            Last Name : {item?.data?.LastName}
           </Text>
-          <Text style={styles.userDataText}>Age : {item.data.age}</Text>
-          <Text style={styles.userDataText}>Email : {item.data.email}</Text>
-          <Text style={styles.userDataText}>Gender : {item.data.gender}</Text>
+          <Text style={styles.userDataText}>Age : {item?.data?.age}</Text>
+          <Text style={styles.userDataText}>Email : {item?.data?.email}</Text>
+          <Text style={styles.userDataText}>Gender : {item?.data?.gender}</Text>
         </View>
 
         <View style={styles.threeDotsContainer}>
@@ -69,27 +69,28 @@ const Listing = () => {
   };
 
   const onDone = async () => {
-    console.log('click');
     const res = await firestore()
-      .collection('travel')
-      .where('email', '==', selectedItem.data.email)
-      .get();
+      ?.collection('travel')
+      ?.where('email', '==', selectedItem?.data?.email)
+      ?.get();
 
     res.forEach(documentSnapshot => {
-      setDeleteID(documentSnapshot.id);
+      onDeleteUser(documentSnapshot?.id);
     });
-    console.log(deleteID);
-    onDeleteUser();
   };
 
-  const onDeleteUser = async () => {
-    const res = await firestore().collection('travel').doc(deleteID).delete();
-    console.log(res);
+  const onDeleteUser = async docID => {
+    await firestore()?.collection('travel')?.doc(docID)?.delete();
     setModal(false);
   };
 
   const onCancel = () => {
     setModal(false);
+  };
+
+  const onRefresh = () => {
+    setPullToRefresh(true);
+    fetchUser();
   };
 
   return (
@@ -106,6 +107,8 @@ const Listing = () => {
         keyExtractor={(item, index) => item?.email || index}
         ListEmptyComponent={<EmptyComponent loading={loading} />}
         ListFooterComponent={<ListFooterComponent />}
+        refreshing={pullToRefresh}
+        onRefresh={onRefresh}
       />
 
       <ReactNativeModal
