@@ -39,7 +39,7 @@ const Listing = () => {
 
   useEffect(() => {
     fetchUser();
-  }, []);
+  }, [modal, pullToRefresh]);
 
   const onAddUser = async () => {
     navigation.navigate('AddUsers');
@@ -89,7 +89,6 @@ const Listing = () => {
 
   const onRefresh = () => {
     setPullToRefresh(true);
-    fetchUser();
   };
 
   return (
