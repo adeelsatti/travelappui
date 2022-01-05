@@ -8,7 +8,7 @@ const ListFooterComponent = () => {
   const [counter, setCounter] = useState(0);
   useEffect(() => {
     firestore()
-      .collection('travel1')
+      .collection('travel')
       .get()
       .then(querySnapshot => {
         setCounter(querySnapshot.size);

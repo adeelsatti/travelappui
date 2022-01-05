@@ -20,20 +20,6 @@ const Liked = () => {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState();
-  const [refreshing, setRefreshing] = useState(false);
-
-  const [firstname, ...otherInfo] = data;
-
-  console.log('FirstName', firstname);
-  console.log('OtherInfo', otherInfo);
-
-  /*  useEffect(() => {
-    setLoading(true);
-    fetch('http://universities.hipolabs.com/search?country=' + changeText).then(
-      response => response.json().then(response => setData(response)),
-    );
-    setLoading(false);
-  }, []);*/
 
   const fetchUniversity = async () => {
     if (changeText.trim().length) {
@@ -101,16 +87,6 @@ const Liked = () => {
     );
   };
 
-  const ListFooterLoading = () => {
-    return (
-      <View>
-        {data.length > 0 && (
-          <ActivityIndicator size="large" color={AppStyles.colorSet.pink} />
-        )}
-      </View>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.headerText}>
@@ -138,10 +114,9 @@ const Liked = () => {
 
       <FlatList
         data={data}
-        //renderItem={({item}) => renderUser(item)}
         renderItem={renderUser}
         keyExtractor={item => item.id}
-        ItemSeparatorComponent={() => lineSeparator()}
+        ItemSeparatorComponent={lineSeparator}
         ListEmptyComponent={EmptyComponent}
       />
       <ReactNativeModal

@@ -1,39 +1,37 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
+import {ReactNativeModal} from 'react-native-modal';
 
 import styles from './styles';
-import {AppStyles} from '../../themes';
 import DotMenuComponent from '../../components/DotMenuComponent';
+import ListFooterComponent from '../../components/ListFooterComponent';
+import EmptyComponent from '../../components/EmptyComponent';
 
 const Listing = () => {
   const navigation = useNavigation();
   const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [selectedItem, setSelectedItem] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modal, setModal] = useState(false);
+  const [deleteID, setDeleteID] = useState(false);
   const arrayUsers = [];
 
-  const FetchUser = async () => {
-    setLoading(true);
-    const result = await firestore().collection('travel1').get();
+  const fetchUser = async () => {
+    const result = await firestore().collection('travel').get();
     await Promise.all(
       result?.docs.map(async doc => {
         const data = await doc?.data();
         arrayUsers.push({data});
       }),
       setResults(arrayUsers),
-      setLoading(false),
     );
   };
 
+  //console.log(results)
   useEffect(() => {
-    FetchUser();
+    fetchUser();
   }, []);
 
   const onAddUser = async () => {
@@ -41,6 +39,8 @@ const Listing = () => {
   };
 
   const onRenderUsers = ({item}) => {
+    setLoading(false);
+
     return (
       <View style={styles.userContainer}>
         <View style={styles.textContainer}>
@@ -57,27 +57,39 @@ const Listing = () => {
 
         <View style={styles.threeDotsContainer}>
           <TouchableOpacity style={styles.threeDotsButton}>
-            <DotMenuComponent />
+            <DotMenuComponent
+              item={item}
+              setModal={setModal}
+              setSelectedItem={setSelectedItem}
+            />
           </TouchableOpacity>
         </View>
       </View>
     );
   };
 
-  const emptyComponent = () => {
-    return (
-      <>
-        {loading ? (
-          <View>
-            <ActivityIndicator size="large" color={AppStyles.colorSet.pink} />
-          </View>
-        ) : (
-          <View>
-            <Text>Not Found</Text>
-          </View>
-        )}
-      </>
-    );
+  const onDone = async () => {
+    console.log('click');
+    const res = await firestore()
+      .collection('travel')
+      .where('email', '==', selectedItem.data.email)
+      .get();
+
+    res.forEach(documentSnapshot => {
+      setDeleteID(documentSnapshot.id);
+    });
+    console.log(deleteID);
+    onDeleteUser();
+  };
+
+  const onDeleteUser = async () => {
+    const res = await firestore().collection('travel').doc(deleteID).delete();
+    console.log(res);
+    setModal(false);
+  };
+
+  const onCancel = () => {
+    setModal(false);
   };
 
   return (
@@ -92,51 +104,34 @@ const Listing = () => {
         data={results}
         renderItem={onRenderUsers}
         keyExtractor={(item, index) => item?.email || index}
-        ListEmptyComponent={emptyComponent}
-        //ListFooterComponent={<ListFooterComponent />}
-        //ListHeaderComponent={<ListHeaderComponent />}
+        ListEmptyComponent={<EmptyComponent loading={loading} />}
+        ListFooterComponent={<ListFooterComponent />}
       />
-      <View style={styles.modalContainer1}>
-        {/*<ReactNativeModal
-            isVisible={modalOpen}
-            style={styles.modalContainer}
-            hasBackdrop={true}
-            coverScreen={true}
-            backdropOpacity={0.5}
-            backdropColor={'black'}>
-            <View style={styles.userDeleteModal}>
-              <Text style={styles.userDataText}>
-            First Name : {selectedItem?.data.FirstName}
-          </Text>
-          <Text style={styles.userDataText}>
-            Last Name: {selectedItem?.data.LastName}
-          </Text>
-          <Text style={styles.userDataText}>
-            Age : {selectedItem?.data.age}
-          </Text>
-          <Text style={styles.userDataText}>
-            Email: {selectedItem?.data.email}
-          </Text>
-          <Text style={styles.userDataText}>
-            Gender: {selectedItem?.data.gender}
+
+      <ReactNativeModal
+        isVisible={modal}
+        coverScreen={true}
+        hasBackdrop={true}
+        onBackdropPress={() => setModal(false)}>
+        <View style={styles.deleteContainer}>
+          <Text style={styles.confirmDelete}>
+            Are you sure you want to delete this user
           </Text>
 
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => setModalOpen(false)}>
-                  <Text style={styles.modalBtnText}>Delete </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={() => setModalOpen(false)}>
-                  <Text style={styles.modalBtnText}>Update </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </ReactNativeModal>*/}
-      </View>
+          <View style={styles.deleteButtonContainer}>
+            <TouchableOpacity
+              style={styles.confirmDeleteButton}
+              onPress={onDone}>
+              <Text style={styles.deleteText}>OK</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.confirmDeleteButton}
+              onPress={onCancel}>
+              <Text style={styles.deleteText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ReactNativeModal>
     </View>
   );
 };

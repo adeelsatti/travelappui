@@ -15,20 +15,22 @@ import styles from './styles';
 import {AppStyles} from '../../themes';
 import ageData from '../../assests/data/ageData';
 
-const AddUsers = () => {
-  const [checked, setChecked] = useState('');
-  const [fname, setFname] = useState('');
-  const [lname, setLname] = useState('');
-  const [email, setEmail] = useState('');
-  const [age, setAge] = useState('');
+const AddUsers = ({route}) => {
+  const [checked, setChecked] = useState(route?.params?.data?.gender || '');
+  const [fname, setFname] = useState(route?.params?.data?.FirstName || '');
+  const [lname, setLname] = useState(route?.params?.data?.LastName || '');
+  const [email, setEmail] = useState(route?.params?.data?.email || '');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(route?.params?.data?.age || '');
+  const [items, setItems] = useState(ageData);
 
   const [fnameError, setFnameError] = useState('');
   const [lnameError, setLnameError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [genderError, setGenderError] = useState('');
   const [ageError, setAgeError] = useState('');
+  const [docId, setDocId] = useState('');
 
   const navigation = useNavigation();
   let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -44,7 +46,6 @@ const AddUsers = () => {
       setEmailError('Enter Email');
     }
     if (email?.trim()?.length && !reg.test(email)) {
-      console.log(!reg.test(email));
       setEmailError('incorrect email');
     }
     if (email?.trim()?.length && reg?.test(email)) {
@@ -53,7 +54,7 @@ const AddUsers = () => {
     if (!checked?.trim()?.length) {
       setGenderError('Select Gender');
     }
-    if (!age?.trim()?.length) {
+    if (!value) {
       setAgeError('Enter Age');
     }
     if (
@@ -61,24 +62,53 @@ const AddUsers = () => {
       lname?.trim()?.length &&
       email?.trim()?.length &&
       checked?.trim()?.length &&
-      age?.trim()?.length
+      value
     ) {
       onAddData();
     }
   };
+
   const onAddData = async () => {
-    console.log('clicked in');
     setLoading(true);
 
-    await firestore()?.collection('travel1')?.add({
+    await firestore()?.collection('travel')?.add({
       FirstName: fname,
       LastName: lname,
       email: email,
       gender: checked,
-      age: age,
+      age: value,
     });
-    console.log('clicked out');
     setLoading(false);
+    onNavigate();
+  };
+
+  const onUpdateData = async () => {
+    setLoading(true);
+    var res = await firestore()
+      .collection('travel')
+      .where('email', '==', route.params.data.email)
+      .get();
+
+    res.forEach(documentSnapshot => {
+      setDocId(documentSnapshot.id);
+    });
+
+    onFirebaseUpdate();
+  };
+
+  const onFirebaseUpdate = async () => {
+    await firestore().collection('travel').doc(docId).update({
+      FirstName: fname,
+      LastName: lname,
+      age: value,
+      email: email,
+      gender: checked,
+    });
+    setLoading(false);
+    onNavigate();
+  };
+
+  const onNavigate = () => {
     navigation.navigate('Listing');
   };
 
@@ -93,10 +123,15 @@ const AddUsers = () => {
   const onChangeEmail = values => {
     setEmail(values);
   };
+  const onChangeItem = values => {
+    setValue(values);
+  };
 
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.addTitle}> Add User </Text>
+      <Text style={styles.addTitle}>
+        {!route?.params?.data?.email ? 'Add User' : 'Update User'}{' '}
+      </Text>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.addInputText}
@@ -142,26 +177,41 @@ const AddUsers = () => {
         {!checked && <Text style={styles.errorText}>{genderError}</Text>}
 
         <DropDownPicker
-          items={ageData}
+          items={items}
           setOpen={setOpen}
           open={open}
+          value={value}
+          setValue={setValue}
+          itemKey={items.id}
           style={styles.dropDownPicker}
           containerStyle={styles.containerWidth}
           dropDownContainerStyle={styles.dropDownContainer}
-          dropDownDirection="Top"
-          setitems={ageData.values}
+          setItems={ageData.values}
+          onChange={onChangeItem}
         />
-        {!age && <Text style={styles.errorText}>{ageError}</Text>}
+        {!value && <Text style={styles.errorText}>{ageError}</Text>}
       </View>
-      <TouchableOpacity onPress={validateAddForm} style={styles.addButton}>
-        {loading ? (
-          <View>
-            <ActivityIndicator size="small" color={AppStyles.colorSet.pink} />
-          </View>
-        ) : (
-          <Text style={styles.buttonText}>Add Data</Text>
-        )}
-      </TouchableOpacity>
+      {!route?.params?.data?.email ? (
+        <TouchableOpacity onPress={validateAddForm} style={styles.addButton}>
+          {loading ? (
+            <View>
+              <ActivityIndicator size="small" color={AppStyles.colorSet.pink} />
+            </View>
+          ) : (
+            <Text style={styles.buttonText}>Add Data</Text>
+          )}
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity onPress={onUpdateData} style={styles.addButton}>
+          {loading ? (
+            <View>
+              <ActivityIndicator size="small" color={AppStyles.colorSet.pink} />
+            </View>
+          ) : (
+            <Text style={styles.buttonText}>Update Data</Text>
+          )}
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
