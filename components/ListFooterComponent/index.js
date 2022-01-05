@@ -1,22 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Text, View} from 'react-native';
 
 import styles from './styles';
-import firestore from '@react-native-firebase/firestore';
 
-const ListFooterComponent = () => {
-  const [counter, setCounter] = useState(0);
-  useEffect(() => {
-    firestore()
-      .collection('travel')
-      .get()
-      .then(querySnapshot => {
-        setCounter(querySnapshot.size);
-      });
-  }, []);
+const ListFooterComponent = ({count}) => {
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.totalUsers}>Total User: {counter}</Text>
+      <Text style={styles.totalUsers}>Total User: {count}</Text>
     </View>
   );
 };

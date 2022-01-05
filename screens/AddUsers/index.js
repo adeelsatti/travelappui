@@ -16,7 +16,7 @@ import {AppStyles} from '../../themes';
 import ageData from '../../assests/data/ageData';
 
 const AddUsers = ({route}) => {
-  const routeParams = route?.params?.data;
+  const routeParams = route?.params?.res;
   const [checked, setChecked] = useState(routeParams?.gender || '');
   const [fname, setFname] = useState(routeParams?.FirstName || '');
   const [lname, setLname] = useState(routeParams?.LastName || '');
@@ -64,9 +64,7 @@ const AddUsers = ({route}) => {
       checked?.trim()?.length &&
       value
     ) {
-      {
-        routeParams?.email ? onUpdateData() : onAddData();
-      }
+      routeParams?.Id ? onUpdateData() : onAddData();
     }
   };
 
@@ -86,24 +84,20 @@ const AddUsers = ({route}) => {
 
   const onUpdateData = async () => {
     setLoading(true);
-    var res = await firestore()
-      .collection('travel')
-      .where('email', '==', routeParams?.email)
-      .get();
-
-    res.forEach(documentSnapshot => {
-      onFirebaseUpdate(documentSnapshot?.id);
-    });
-  };
-
-  const onFirebaseUpdate = async docID => {
-    await firestore().collection('travel').doc(docID).update({
-      FirstName: fname,
-      LastName: lname,
-      age: value,
-      email: email,
-      gender: checked,
-    });
+    try {
+      await firestore().collection('travel').doc(routeParams?.Id).set(
+        {
+          FirstName: fname,
+          LastName: lname,
+          age: value,
+          email: email,
+          gender: checked,
+        },
+        {merge: true},
+      );
+    } catch (e) {
+      console.log(e);
+    }
     setLoading(false);
     onNavigate();
   };

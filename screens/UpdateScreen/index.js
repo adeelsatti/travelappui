@@ -68,11 +68,7 @@ const UpdateScreen = ({route}) => {
   const onUpdateUser = async () => {
     setLoading(true);
 
-    const results = await firestore()
-      ?.collection('travel1')
-      ?.where('email', '=', email)
-      .get();
-    console.log(results);
+    await firestore()?.collection('travel1')?.where('email', '=', email).get();
     setLoading(false);
     navigation.navigate('Listing');
   };
@@ -93,7 +89,6 @@ const UpdateScreen = ({route}) => {
     setValue(values);
   };
 
-  console.log('route params frit', value);
   return (
     <View style={styles.mainWrapper}>
       <Text style={styles.addTitle}> Update User </Text>

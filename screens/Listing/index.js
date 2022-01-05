@@ -16,17 +16,24 @@ const Listing = () => {
   const [loading, setLoading] = useState(true);
   const [pullToRefresh, setPullToRefresh] = useState(false);
   const [modal, setModal] = useState(false);
+  const [count, setCount] = useState('');
+
   const arrayUsers = [];
 
   const fetchUser = async () => {
-    const result = await firestore().collection('travel').get();
-    await Promise.all(
-      result?.docs.map(async doc => {
-        const data = await doc?.data();
-        arrayUsers.push({data});
-      }),
-      setResults(arrayUsers),
-    );
+    await firestore()
+      .collection('travel')
+      .get()
+      .then(querySnapshot => {
+        setCount(querySnapshot.size);
+        querySnapshot.forEach(doc => {
+          const ids = {Id: doc?.id};
+          const data = doc?.data();
+          const res = {...ids, ...data};
+          arrayUsers.push({res});
+        });
+      });
+    setResults(arrayUsers);
     setPullToRefresh(false);
   };
 
@@ -45,14 +52,14 @@ const Listing = () => {
       <View style={styles.userContainer}>
         <View style={styles.textContainer}>
           <Text style={styles.userDataText}>
-            First Name : {item?.data?.FirstName}
+            First Name : {item?.res?.FirstName}
           </Text>
           <Text style={styles.userDataText}>
-            Last Name : {item?.data?.LastName}
+            Last Name : {item?.res?.LastName}
           </Text>
-          <Text style={styles.userDataText}>Age : {item?.data?.age}</Text>
-          <Text style={styles.userDataText}>Email : {item?.data?.email}</Text>
-          <Text style={styles.userDataText}>Gender : {item?.data?.gender}</Text>
+          <Text style={styles.userDataText}>Age : {item?.res?.age}</Text>
+          <Text style={styles.userDataText}>Email : {item?.res?.email}</Text>
+          <Text style={styles.userDataText}>Gender : {item?.res?.gender}</Text>
         </View>
 
         <View style={styles.threeDotsContainer}>
@@ -69,18 +76,10 @@ const Listing = () => {
   };
 
   const onDone = async () => {
-    const res = await firestore()
+    await firestore()
       ?.collection('travel')
-      ?.where('email', '==', selectedItem?.data?.email)
-      ?.get();
-
-    res.forEach(documentSnapshot => {
-      onDeleteUser(documentSnapshot?.id);
-    });
-  };
-
-  const onDeleteUser = async docID => {
-    await firestore()?.collection('travel')?.doc(docID)?.delete();
+      ?.doc(selectedItem?.res?.Id)
+      ?.delete();
     setModal(false);
   };
 
@@ -106,7 +105,7 @@ const Listing = () => {
         renderItem={onRenderUsers}
         keyExtractor={(item, index) => item?.email || index}
         ListEmptyComponent={<EmptyComponent loading={loading} />}
-        ListFooterComponent={<ListFooterComponent />}
+        ListFooterComponent={<ListFooterComponent count={count} />}
         refreshing={pullToRefresh}
         onRefresh={onRefresh}
       />
