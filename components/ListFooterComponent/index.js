@@ -2,11 +2,16 @@ import React from 'react';
 import {Text, View} from 'react-native';
 
 import styles from './styles';
+import {ActivityIndicator} from 'react-native-paper';
 
-const ListFooterComponent = ({count}) => {
+const ListFooterComponent = ({count, endReach, loading}) => {
   return (
     <View style={styles.mainContainer}>
-      <Text style={styles.totalUsers}>Total User: {count}</Text>
+      {!endReach && !loading ? (
+        <ActivityIndicator />
+      ) : (
+        <Text style={styles.totalUsers}>Total User: {count}</Text>
+      )}
     </View>
   );
 };

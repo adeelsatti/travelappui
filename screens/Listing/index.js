@@ -17,15 +17,21 @@ const Listing = () => {
   const [pullToRefresh, setPullToRefresh] = useState(false);
   const [modal, setModal] = useState(false);
   const [count, setCount] = useState('');
+  const [startAfter, setStartAfter] = useState({});
+  const [endReach, setEndReach] = useState(false);
+  const pageSize = 5;
+  let lastVisible = 0;
 
   const arrayUsers = [];
 
   const fetchUser = async () => {
     await firestore()
       .collection('travel')
+      .limit(pageSize)
       .get()
       .then(querySnapshot => {
         setCount(querySnapshot.size);
+        lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
         querySnapshot.forEach(doc => {
           const ids = {Id: doc?.id};
           const data = doc?.data();
@@ -35,6 +41,34 @@ const Listing = () => {
       });
     setResults(arrayUsers);
     setPullToRefresh(false);
+    setStartAfter(lastVisible);
+  };
+
+  const onEndReached = async () => {
+    if (!endReach) {
+      await firestore()
+        .collection('travel')
+        .limit(pageSize)
+        .startAfter(startAfter)
+        .get()
+        .then(querySnapshot => {
+          const size = querySnapshot.size;
+          setCount(count + size);
+          lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+          querySnapshot.forEach(doc => {
+            const ids = {Id: doc?.id};
+            const data = doc?.data();
+            const res = {...ids, ...data};
+            arrayUsers.push({res});
+          });
+        });
+
+      setResults([...results, ...arrayUsers]);
+      setPullToRefresh(false);
+      setStartAfter(lastVisible);
+      console.log(arrayUsers?.length);
+      arrayUsers?.length === 0 ? setEndReach(true) : setEndReach(false);
+    }
   };
 
   useEffect(() => {
@@ -89,6 +123,7 @@ const Listing = () => {
 
   const onRefresh = () => {
     setPullToRefresh(true);
+    setEndReach(false);
   };
 
   return (
@@ -104,9 +139,16 @@ const Listing = () => {
         renderItem={onRenderUsers}
         keyExtractor={(item, index) => item?.email || index}
         ListEmptyComponent={<EmptyComponent loading={loading} />}
-        ListFooterComponent={<ListFooterComponent count={count} />}
+        ListFooterComponent={
+          <ListFooterComponent
+            count={count}
+            endReach={endReach}
+            loading={loading}
+          />
+        }
         refreshing={pullToRefresh}
         onRefresh={onRefresh}
+        onEndReached={onEndReached}
       />
 
       <ReactNativeModal

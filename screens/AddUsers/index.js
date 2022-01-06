@@ -124,7 +124,7 @@ const AddUsers = ({route}) => {
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.addTitle}>
-        {!routeParams?.email ? 'Add User' : 'Update User'}{' '}
+        {!routeParams?.email ? 'Add User' : 'Update User'}
       </Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -193,7 +193,7 @@ const AddUsers = ({route}) => {
           </View>
         ) : (
           <Text style={styles.buttonText}>
-            {!routeParams?.email ? 'Add User' : 'Update User'}{' '}
+            {!routeParams?.Id ? 'Add User' : 'Update User'}
           </Text>
         )}
       </TouchableOpacity>
