@@ -16,64 +16,47 @@ const Listing = () => {
   const [loading, setLoading] = useState(true);
   const [pullToRefresh, setPullToRefresh] = useState(false);
   const [modal, setModal] = useState(false);
-  const [count, setCount] = useState('');
-  const [startAfter, setStartAfter] = useState({});
+  const [count, setCount] = useState(0);
+  const [startAfter, setStartAfter] = useState(null);
   const [endReach, setEndReach] = useState(false);
-  const pageSize = 5;
+  const pageSize = 4;
   let lastVisible = 0;
 
   const arrayUsers = [];
 
   const fetchUser = async () => {
-    await firestore()
-      .collection('travel')
-      .limit(pageSize)
-      .get()
-      .then(querySnapshot => {
-        setCount(querySnapshot.size);
-        lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-        querySnapshot.forEach(doc => {
-          const ids = {Id: doc?.id};
-          const data = doc?.data();
-          const res = {...ids, ...data};
-          arrayUsers.push({res});
-        });
-      });
-    setResults(arrayUsers);
-    setPullToRefresh(false);
+    if (endReach) {
+      return;
+    }
+    const response = await firestore().collection('travel').orderBy('email');
+    console.log('result Size', results.length);
+    const query = response.limit(pageSize);
+    const res = await (results.length < pageSize
+      ? query.get()
+      : response.startAfter(startAfter).limit(pageSize).get());
+    lastVisible = res?.docs[res?.docs?.length - 1];
+    const size = res?.size;
+    setCount(count + size);
+    res.forEach(doc => {
+      const ids = {Id: doc?.id};
+      const data = doc?.data();
+      const res = {...ids, ...data};
+      arrayUsers.push({res});
+    });
     setStartAfter(lastVisible);
+    setResults([...results, ...arrayUsers]);
+    setPullToRefresh(false);
+    setEndReach(!arrayUsers.length);
   };
 
   const onEndReached = async () => {
-    if (!endReach) {
-      await firestore()
-        .collection('travel')
-        .limit(pageSize)
-        .startAfter(startAfter)
-        .get()
-        .then(querySnapshot => {
-          const size = querySnapshot.size;
-          setCount(count + size);
-          lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-          querySnapshot.forEach(doc => {
-            const ids = {Id: doc?.id};
-            const data = doc?.data();
-            const res = {...ids, ...data};
-            arrayUsers.push({res});
-          });
-        });
-
-      setResults([...results, ...arrayUsers]);
-      setPullToRefresh(false);
-      setStartAfter(lastVisible);
-      console.log(arrayUsers?.length);
-      arrayUsers?.length === 0 ? setEndReach(true) : setEndReach(false);
-    }
+    fetchUser();
+    setPullToRefresh(false);
   };
 
   useEffect(() => {
     fetchUser();
-  }, [modal, pullToRefresh]);
+  }, [pullToRefresh]);
 
   const onAddUser = async () => {
     navigation.navigate('AddUsers');
@@ -110,10 +93,8 @@ const Listing = () => {
   };
 
   const onDone = async () => {
-    await firestore()
-      ?.collection('travel')
-      ?.doc(selectedItem?.res?.Id)
-      ?.delete();
+    const result = results.filter(x => x !== selectedItem);
+    setResults(result);
     setModal(false);
   };
 
