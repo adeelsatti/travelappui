@@ -5,15 +5,12 @@ import styles from './styles';
 import {ActivityIndicator} from 'react-native-paper';
 
 const ListFooterComponent = ({count, endReach, loading}) => {
-  return (
-    <View style={styles.mainContainer}>
-      {!endReach && !loading ? (
-        <ActivityIndicator />
-      ) : (
-        <Text style={styles.totalUsers}>Total User: {count}</Text>
-      )}
-    </View>
-  );
+  if (!endReach && !loading) {
+    return <ActivityIndicator />;
+  }
+  if (endReach || loading) {
+    return <Text style={styles.totalUsers}>Total User: {count}</Text>;
+  }
 };
 
 export default ListFooterComponent;

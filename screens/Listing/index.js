@@ -19,7 +19,7 @@ const Listing = () => {
   const [count, setCount] = useState(0);
   const [startAfter, setStartAfter] = useState(null);
   const [endReach, setEndReach] = useState(false);
-  const pageSize = 4;
+  const pageSize = 2;
   let lastVisible = 0;
 
   const arrayUsers = [];
@@ -29,7 +29,6 @@ const Listing = () => {
       return;
     }
     const response = await firestore().collection('travel').orderBy('email');
-    console.log('result Size', results.length);
     const query = response.limit(pageSize);
     const res = await (results.length < pageSize
       ? query.get()
@@ -49,7 +48,7 @@ const Listing = () => {
     setEndReach(!arrayUsers.length);
   };
 
-  const onEndReached = async () => {
+  const onEndReached = () => {
     fetchUser();
     setPullToRefresh(false);
   };
@@ -95,6 +94,7 @@ const Listing = () => {
   const onDone = async () => {
     const result = results.filter(x => x !== selectedItem);
     setResults(result);
+    setCount(count - 1);
     setModal(false);
   };
 
@@ -104,6 +104,8 @@ const Listing = () => {
 
   const onRefresh = () => {
     setPullToRefresh(true);
+    setResults([]);
+    setCount(0);
     setEndReach(false);
   };
 
@@ -119,13 +121,17 @@ const Listing = () => {
         data={results}
         renderItem={onRenderUsers}
         keyExtractor={(item, index) => item?.email || index}
-        ListEmptyComponent={<EmptyComponent loading={loading} />}
+        ListEmptyComponent={
+          !pullToRefresh && <EmptyComponent loading={loading} />
+        }
         ListFooterComponent={
-          <ListFooterComponent
-            count={count}
-            endReach={endReach}
-            loading={loading}
-          />
+          !pullToRefresh && (
+            <ListFooterComponent
+              count={count}
+              endReach={endReach}
+              loading={loading}
+            />
+          )
         }
         refreshing={pullToRefresh}
         onRefresh={onRefresh}
