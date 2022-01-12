@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Button,
   ImageBackground,
   StyleSheet,
   Text,
@@ -10,21 +9,19 @@ import {
 import {AppStyles, MetricsMod} from '../themes';
 import Entypo from 'react-native-vector-icons/Entypo';
 import colors from '../assests/colors/colors';
-import store from '../screens/store';
 
 const Details = ({route, navigation}) => {
-  const state = store.getState();
+  const [state, setState] = useState(0);
   const {item} = route.params;
   const [colorChange, setColorChange] = useState(AppStyles.colorSet.silverII);
 
-  console.log(state);
   const handleHeartClick = () => {
-    if (colorChange === AppStyles.colorSet.silverII) {
-      setColorChange(colors.orange);
-      store.dispatch({type: 'increment'});
-    } else {
+    if (colorChange !== AppStyles.colorSet.silverII) {
       setColorChange(AppStyles.colorSet.silverII);
-      store.dispatch({type: 'decrement'});
+      setState(state - 1);
+    } else {
+      setColorChange(colors.orange);
+      setState(state + 1);
     }
   };
 
@@ -66,7 +63,7 @@ const Details = ({route, navigation}) => {
           />
         </View>
         <View style={styles.countWrapper}>
-          <Text>{state?.count ?? 0}</Text>
+          <Text>{state}</Text>
         </View>
 
         <View style={styles.descriptionTextWrapper}>
