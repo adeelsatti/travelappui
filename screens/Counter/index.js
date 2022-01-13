@@ -8,16 +8,19 @@ import {connect} from 'react-redux';
 import * as Actions from '../../constants';
 
 const Counter = props => {
-  console.log(props);
+  console.log('propsData: ', props);
   const {count} = props?.count;
 
   const onIncrementCount = () => {
+    const name = 'adeel satti';
+    props.addNewUser(name);
     props.incrementCount();
   };
 
   const onDecrementCount = () => {
     props.decrementCount();
   };
+
   return (
     <View style={styles.mainContainer}>
       <TouchableOpacity style={styles.counterButton} onPress={onIncrementCount}>
@@ -45,15 +48,14 @@ const Counter = props => {
 
 const mapStateToProps = state => ({
   count: state?.count,
+  users: state?.users,
 });
-
-//const actionsCreators = Object.assign({}, {changeCounter});
 
 const mapDispatchToProps = dispatch => {
   return {
-    //actions: bindActionCreators({...actionsCreators}, dispatch),
     incrementCount: () => dispatch({type: Actions.COUNTER_INCREMENT}),
     decrementCount: () => dispatch({type: Actions.COUNTER_DECREMENT}),
+    addNewUser: name => dispatch({type: Actions.CREATE_USER, name}),
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Counter);

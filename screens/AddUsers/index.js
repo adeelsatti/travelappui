@@ -14,8 +14,11 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import styles from './styles';
 import {AppStyles} from '../../themes';
 import ageData from '../../assests/data/ageData';
+import * as Actions from '../../constants';
+import {connect} from 'react-redux';
 
-const AddUsers = ({route}) => {
+const AddUsers = (props, {route}) => {
+  console.log('user: ', props?.users);
   const routeParams = route?.params?.res;
   const [checked, setChecked] = useState(routeParams?.gender || '');
   const [fname, setFname] = useState(routeParams?.FirstName || '');
@@ -31,6 +34,15 @@ const AddUsers = ({route}) => {
   const [emailError, setEmailError] = useState('');
   const [genderError, setGenderError] = useState('');
   const [ageError, setAgeError] = useState('');
+  const id = Math.floor(Math.random() * 10000) + 1;
+  const user = {
+    id: Math.floor(Math.random() * 1000) + 1,
+    firstName: fname,
+    lastName: lname,
+    email: email,
+    gender: checked,
+    age: value,
+  };
 
   const navigation = useNavigation();
   let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -64,7 +76,9 @@ const AddUsers = ({route}) => {
       checked?.trim()?.length &&
       value
     ) {
-      routeParams?.Id ? onUpdateData() : onAddData();
+      //routeParams?.Id ? onUpdateData() : onAddData();
+      props?.addNewUser(user);
+      onNavigate();
     }
   };
 
@@ -110,8 +124,8 @@ const AddUsers = ({route}) => {
     setFname(values);
   };
 
-  const onChangeLname = values => {
-    setLname(values);
+  const onChangeLname = value => {
+    setLname(value);
   };
 
   const onChangeEmail = values => {
@@ -153,7 +167,7 @@ const AddUsers = ({route}) => {
         <View style={styles.radioContainer}>
           <View style={styles.innerContainer}>
             <RadioButton
-              value="Male"
+              value={props?.gender}
               status={checked === 'Male' ? 'checked' : 'unchecked'}
               onPress={() => setChecked('Male')}
             />
@@ -161,7 +175,7 @@ const AddUsers = ({route}) => {
           </View>
           <View style={styles.innerContainer}>
             <RadioButton
-              value="Female"
+              value={props?.gender}
               status={checked === 'Female' ? 'checked' : 'unchecked'}
               onPress={() => setChecked('Female')}
             />
@@ -181,7 +195,7 @@ const AddUsers = ({route}) => {
           containerStyle={styles.containerWidth}
           dropDownContainerStyle={styles.dropDownContainer}
           setItems={ageData.values}
-          onChange={onChangeItem}
+          onChange={() => onChangeItem}
         />
         {!value && <Text style={styles.errorText}>{ageError}</Text>}
       </View>
@@ -200,4 +214,13 @@ const AddUsers = ({route}) => {
     </View>
   );
 };
-export default AddUsers;
+
+const mapStateToProps = state => ({
+  users: state?.users,
+});
+
+const mapDispatchToProps = dispatch => ({
+  addNewUser: user => dispatch({type: Actions.CREATE_USER, user}),
+  deleteUser: id => dispatch({type: Actions.DELETE_USER, id}),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(AddUsers);
