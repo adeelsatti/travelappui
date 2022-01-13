@@ -20,8 +20,8 @@ const DotMenuComponent = ({item, setModal, setSelectedItem}) => {
   };
 
   const onDeleteNavigate = () => {
-    setModal(true);
     setSelectedItem(item);
+    setModal(true);
   };
   return (
     <Menu style={styles.menu}>

@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import {
-  Button,
   ImageBackground,
   StyleSheet,
   Text,
@@ -12,19 +11,20 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import colors from '../assests/colors/colors';
 
 const Details = ({route, navigation}) => {
-  const [count, setCount] = useState(0);
+  const [state, setState] = useState(0);
   const {item} = route.params;
   const [colorChange, setColorChange] = useState(AppStyles.colorSet.silverII);
 
   const handleHeartClick = () => {
-    if (colorChange === AppStyles.colorSet.silverII) {
-      setColorChange(colors.orange);
-      setCount(count + 1);
-    } else {
+    if (colorChange !== AppStyles.colorSet.silverII) {
       setColorChange(AppStyles.colorSet.silverII);
-      setCount(count - 1);
+      setState(state - 1);
+    } else {
+      setColorChange(colors.orange);
+      setState(state + 1);
     }
   };
+
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -58,17 +58,12 @@ const Details = ({route, navigation}) => {
             name="heart"
             size={32}
             color={colorChange}
-            //onPress={handleHeartClick}
-            onPress={()=>{
-
-              handleHeartClick
-
-
-            }}
+            onPress={handleHeartClick}
+            //onPress={() => handleHeartClick}
           />
         </View>
         <View style={styles.countWrapper}>
-          <Text>{count}</Text>
+          <Text>{state}</Text>
         </View>
 
         <View style={styles.descriptionTextWrapper}>

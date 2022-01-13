@@ -16,13 +16,14 @@ import {AppStyles} from '../../themes';
 import ageData from '../../assests/data/ageData';
 
 const AddUsers = ({route}) => {
-  const [checked, setChecked] = useState(route?.params?.data?.gender || '');
-  const [fname, setFname] = useState(route?.params?.data?.FirstName || '');
-  const [lname, setLname] = useState(route?.params?.data?.LastName || '');
-  const [email, setEmail] = useState(route?.params?.data?.email || '');
+  const routeParams = route?.params?.res;
+  const [checked, setChecked] = useState(routeParams?.gender || '');
+  const [fname, setFname] = useState(routeParams?.FirstName || '');
+  const [lname, setLname] = useState(routeParams?.LastName || '');
+  const [email, setEmail] = useState(routeParams?.email || '');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(route?.params?.data?.age || '');
+  const [value, setValue] = useState(routeParams?.age || '');
   const [items, setItems] = useState(ageData);
 
   const [fnameError, setFnameError] = useState('');
@@ -30,7 +31,6 @@ const AddUsers = ({route}) => {
   const [emailError, setEmailError] = useState('');
   const [genderError, setGenderError] = useState('');
   const [ageError, setAgeError] = useState('');
-  const [docId, setDocId] = useState('');
 
   const navigation = useNavigation();
   let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
@@ -64,7 +64,7 @@ const AddUsers = ({route}) => {
       checked?.trim()?.length &&
       value
     ) {
-      onAddData();
+      routeParams?.Id ? onUpdateData() : onAddData();
     }
   };
 
@@ -84,26 +84,20 @@ const AddUsers = ({route}) => {
 
   const onUpdateData = async () => {
     setLoading(true);
-    var res = await firestore()
-      .collection('travel')
-      .where('email', '==', route.params.data.email)
-      .get();
-
-    res.forEach(documentSnapshot => {
-      setDocId(documentSnapshot.id);
-    });
-
-    onFirebaseUpdate();
-  };
-
-  const onFirebaseUpdate = async () => {
-    await firestore().collection('travel').doc(docId).update({
-      FirstName: fname,
-      LastName: lname,
-      age: value,
-      email: email,
-      gender: checked,
-    });
+    try {
+      await firestore().collection('travel').doc(routeParams?.Id).set(
+        {
+          FirstName: fname,
+          LastName: lname,
+          age: value,
+          email: email,
+          gender: checked,
+        },
+        {merge: true},
+      );
+    } catch (e) {
+      console.log(e);
+    }
     setLoading(false);
     onNavigate();
   };
@@ -130,7 +124,7 @@ const AddUsers = ({route}) => {
   return (
     <View style={styles.mainContainer}>
       <Text style={styles.addTitle}>
-        {!route?.params?.data?.email ? 'Add User' : 'Update User'}{' '}
+        {!routeParams?.email ? 'Add User' : 'Update User'}
       </Text>
       <View style={styles.inputContainer}>
         <TextInput
@@ -191,27 +185,18 @@ const AddUsers = ({route}) => {
         />
         {!value && <Text style={styles.errorText}>{ageError}</Text>}
       </View>
-      {!route?.params?.data?.email ? (
-        <TouchableOpacity onPress={validateAddForm} style={styles.addButton}>
-          {loading ? (
-            <View>
-              <ActivityIndicator size="small" color={AppStyles.colorSet.pink} />
-            </View>
-          ) : (
-            <Text style={styles.buttonText}>Add Data</Text>
-          )}
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity onPress={onUpdateData} style={styles.addButton}>
-          {loading ? (
-            <View>
-              <ActivityIndicator size="small" color={AppStyles.colorSet.pink} />
-            </View>
-          ) : (
-            <Text style={styles.buttonText}>Update Data</Text>
-          )}
-        </TouchableOpacity>
-      )}
+
+      <TouchableOpacity onPress={validateAddForm} style={styles.addButton}>
+        {loading ? (
+          <View>
+            <ActivityIndicator size="small" color={AppStyles.colorSet.pink} />
+          </View>
+        ) : (
+          <Text style={styles.buttonText}>
+            {!routeParams?.Id ? 'Add User' : 'Update User'}
+          </Text>
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
