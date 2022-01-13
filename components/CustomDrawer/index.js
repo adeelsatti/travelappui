@@ -62,6 +62,14 @@ const CustomDrawer = props => {
             onPress={() => navigation.navigate('Liked')}
           />
           <DrawerItems
+            title={'Counter'}
+            type="AntDesign"
+            iconName="like1"
+            size={24}
+            color={AppStyles.colorSet.black}
+            onPress={() => navigation.navigate('Counter')}
+          />
+          <DrawerItems
             title={'Setting'}
             type="Ionicons"
             iconName="ios-settings"

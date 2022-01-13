@@ -19,6 +19,7 @@ import UpdateScreen from './screens/UpdateScreen';
 import {MenuProvider} from 'react-native-popup-menu';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
+import Counter from "./screens/Counter";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -98,7 +99,7 @@ const App = () => {
     <MenuProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen
+          {/*  <Stack.Screen
             name="SignIn"
             component={SignIn}
             options={{headerShown: false}}
@@ -107,7 +108,7 @@ const App = () => {
             name="SignUp"
             component={SignUp}
             options={{headerShown: false}}
-          />
+          />*/}
           <Stack.Screen
             name="TabNavigator"
             component={TabNavigator}
@@ -131,6 +132,11 @@ const App = () => {
           <Stack.Screen
             name="Update"
             component={UpdateScreen}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Counter"
+            component={Counter}
             options={{headerShown: false}}
           />
         </Stack.Navigator>
