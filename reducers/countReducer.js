@@ -28,19 +28,22 @@ export const countReducer = (state = initialState, action) => {
 export const userReducer = (state = userInitialState, action) => {
   switch (action.type) {
     case Action.CREATE_USER: {
-      return {...state, users: action.user};
+      return {...state, users: [...(state?.users ?? []), action?.user]};
     }
     case Action.EDIT_USER: {
-      return state.map(user => {
-        if (user.id === action.id) {
-          return {...state, users: action.user};
-        }
-      });
+      const updateIndex = state?.users.findIndex(
+        user => user?.id === action?.id,
+      );
+      state.users[updateIndex] = action?.user;
+      return {
+        ...state,
+        users: [...state.users],
+      };
     }
     case Action.DELETE_USER: {
       return {
         ...state,
-        users: state.users.filter((item, index) => index !== action.id),
+        users: state?.users.filter(item => item.id !== action?.id),
       };
     }
     default:

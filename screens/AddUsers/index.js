@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 import {RadioButton} from 'react-native-paper';
 import {useNavigation} from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -17,12 +16,13 @@ import ageData from '../../assests/data/ageData';
 import * as Actions from '../../constants';
 import {connect} from 'react-redux';
 
-const AddUsers = (props, {route}) => {
-  console.log('user: ', props?.users);
-  const routeParams = route?.params?.res;
+const AddUsers = props => {
+  const routeParams = props?.route?.params;
+  console.log('user: ', props?.route?.params);
+
   const [checked, setChecked] = useState(routeParams?.gender || '');
-  const [fname, setFname] = useState(routeParams?.FirstName || '');
-  const [lname, setLname] = useState(routeParams?.LastName || '');
+  const [fname, setFname] = useState(routeParams?.firstName || '');
+  const [lname, setLname] = useState(routeParams?.lastName || '');
   const [email, setEmail] = useState(routeParams?.email || '');
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -34,9 +34,9 @@ const AddUsers = (props, {route}) => {
   const [emailError, setEmailError] = useState('');
   const [genderError, setGenderError] = useState('');
   const [ageError, setAgeError] = useState('');
-  const id = Math.floor(Math.random() * 10000) + 1;
+
   const user = {
-    id: Math.floor(Math.random() * 1000) + 1,
+    id: !routeParams ? Math.floor(Math.random() * 1000) + 1 : routeParams?.id,
     firstName: fname,
     lastName: lname,
     email: email,
@@ -76,42 +76,21 @@ const AddUsers = (props, {route}) => {
       checked?.trim()?.length &&
       value
     ) {
-      //routeParams?.Id ? onUpdateData() : onAddData();
-      props?.addNewUser(user);
-      onNavigate();
+      routeParams?.id ? onUpdateData() : onAddData();
     }
   };
 
   const onAddData = async () => {
     setLoading(true);
-
-    await firestore()?.collection('travel')?.add({
-      FirstName: fname,
-      LastName: lname,
-      email: email,
-      gender: checked,
-      age: value,
-    });
+    props?.addNewUser(user);
     setLoading(false);
     onNavigate();
   };
 
   const onUpdateData = async () => {
     setLoading(true);
-    try {
-      await firestore().collection('travel').doc(routeParams?.Id).set(
-        {
-          FirstName: fname,
-          LastName: lname,
-          age: value,
-          email: email,
-          gender: checked,
-        },
-        {merge: true},
-      );
-    } catch (e) {
-      console.log(e);
-    }
+    console.log(user, routeParams?.id);
+    props?.updateUser(routeParams?.id, user);
     setLoading(false);
     onNavigate();
   };
@@ -124,8 +103,8 @@ const AddUsers = (props, {route}) => {
     setFname(values);
   };
 
-  const onChangeLname = value => {
-    setLname(value);
+  const onChangeLname = values => {
+    setLname(values);
   };
 
   const onChangeEmail = values => {
@@ -207,7 +186,7 @@ const AddUsers = (props, {route}) => {
           </View>
         ) : (
           <Text style={styles.buttonText}>
-            {!routeParams?.Id ? 'Add User' : 'Update User'}
+            {!routeParams?.id ? 'Add User' : 'Update User'}
           </Text>
         )}
       </TouchableOpacity>
@@ -221,6 +200,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   addNewUser: user => dispatch({type: Actions.CREATE_USER, user}),
-  deleteUser: id => dispatch({type: Actions.DELETE_USER, id}),
+  updateUser: (id, user) => dispatch({type: Actions.EDIT_USER, id, user}),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(AddUsers);
