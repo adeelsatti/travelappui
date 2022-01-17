@@ -4,11 +4,14 @@ import {AppStyles, MetricsMod} from '../../themes';
 export default StyleSheet.create({
   mainContainer: {
     flex: 1,
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'center',
+  },
+  counterContainer: {
+    flexDirection: 'row',
   },
   counterButton: {
+    marginHorizontal: MetricsMod.thirty,
   },
   buttonText: {
     fontsize: AppStyles.fontSet.largeI,

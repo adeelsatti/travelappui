@@ -78,12 +78,12 @@ const CustomDrawer = props => {
             onPress={() => {}}
           />
           <DrawerItems
-            title={'Help'}
+            title={'Practise'}
             type="Entypo"
             iconName="help"
             size={24}
             color={AppStyles.colorSet.black}
-            onPress={() => {}}
+            onPress={() => navigation.navigate('welcome')}
           />
           <View style={styles.logOutContainer}>
             <DrawerItems

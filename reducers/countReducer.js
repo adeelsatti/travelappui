@@ -1,17 +1,20 @@
-import {COUNTER_DECREMENT, COUNTER_INCREMENT} from '../constants';
+import * as Action from '../constants';
 
 const initialState = {
   count: 0,
 };
-const countReducer = (state = initialState, action) => {
+const userInitialState = {
+  users: [],
+};
+export const countReducer = (state = initialState, action) => {
   switch (action.type) {
-    case COUNTER_INCREMENT: {
+    case Action.COUNTER_INCREMENT: {
       return {
         ...state,
         count: state.count + 1,
       };
     }
-    case COUNTER_DECREMENT: {
+    case Action.COUNTER_DECREMENT: {
       return {
         ...state,
         count: state.count - 1,
@@ -21,4 +24,38 @@ const countReducer = (state = initialState, action) => {
       return state;
   }
 };
-export default countReducer;
+
+export const userReducer = (state = userInitialState, action) => {
+  switch (action.type) {
+    case Action.CREATE_USER: {
+      return {...state, users: [...(state?.users ?? []), action?.user]};
+    }
+    case Action.EDIT_USER: {
+      /* const updateIndex = state?.users.findIndex(
+        user => user?.id === action?.id,
+      );
+      state.users[updateIndex] = action?.user;
+      return {
+        ...state,
+        users: [...state.users],
+      };*/
+      return {
+        ...state,
+        users: state?.users?.map(user => {
+          if (user?.id === action?.id) {
+            return action?.user;
+          }
+          return user;
+        }),
+      };
+    }
+    case Action.DELETE_USER: {
+      return {
+        ...state,
+        users: state?.users.filter(item => item.id !== action?.payload),
+      };
+    }
+    default:
+      return state;
+  }
+};
