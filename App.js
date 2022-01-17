@@ -19,7 +19,10 @@ import UpdateScreen from './screens/UpdateScreen';
 import {MenuProvider} from 'react-native-popup-menu';
 import SignIn from './screens/SignIn';
 import SignUp from './screens/SignUp';
-import Counter from "./screens/Counter";
+import Counter from './screens/Counter';
+import PractiseFile from './screens/PractiseFile';
+import Welcome from './screens/PractiseScreen/Welcome';
+import ViewImageScreen from './screens/PractiseScreen/ViewImageScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -137,6 +140,21 @@ const App = () => {
           <Stack.Screen
             name="Counter"
             component={Counter}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="Practise"
+            component={PractiseFile}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="welcome"
+            component={Welcome}
+            options={{headerShown: false}}
+          />
+          <Stack.Screen
+            name="ViewImage"
+            component={ViewImageScreen}
             options={{headerShown: false}}
           />
         </Stack.Navigator>

@@ -18,7 +18,6 @@ import {connect} from 'react-redux';
 
 const AddUsers = props => {
   const routeParams = props?.route?.params;
-  console.log('user: ', props?.route?.params);
 
   const [checked, setChecked] = useState(routeParams?.gender || '');
   const [fname, setFname] = useState(routeParams?.firstName || '');
@@ -89,7 +88,6 @@ const AddUsers = props => {
 
   const onUpdateData = async () => {
     setLoading(true);
-    console.log(user, routeParams?.id);
     props?.updateUser(routeParams?.id, user);
     setLoading(false);
     onNavigate();

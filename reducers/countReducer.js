@@ -31,19 +31,28 @@ export const userReducer = (state = userInitialState, action) => {
       return {...state, users: [...(state?.users ?? []), action?.user]};
     }
     case Action.EDIT_USER: {
-      const updateIndex = state?.users.findIndex(
+      /* const updateIndex = state?.users.findIndex(
         user => user?.id === action?.id,
       );
       state.users[updateIndex] = action?.user;
       return {
         ...state,
         users: [...state.users],
+      };*/
+      return {
+        ...state,
+        users: state?.users?.map(user => {
+          if (user?.id === action?.id) {
+            return action?.user;
+          }
+          return user;
+        }),
       };
     }
     case Action.DELETE_USER: {
       return {
         ...state,
-        users: state?.users.filter(item => item.id !== action?.id),
+        users: state?.users.filter(item => item.id !== action?.payload),
       };
     }
     default:

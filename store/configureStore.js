@@ -1,13 +1,10 @@
 import {combineReducers, createStore} from 'redux';
 import {countReducer, userReducer} from '../reducers/countReducer';
 
-const rootReducer = combineReducers(
-  {count: countReducer},
-  {users: userReducer},
-);
+const rootReducer = combineReducers({users: userReducer, count: countReducer});
 
 const configureStore = () => {
-  return createStore(userReducer);
+  return createStore(rootReducer);
 };
 
 export default configureStore;

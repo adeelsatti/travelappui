@@ -2,15 +2,17 @@ import React, {useState} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {ReactNativeModal} from 'react-native-modal';
-import {connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import styles from './styles';
 import DotMenuComponent from '../../components/DotMenuComponent';
-import * as Actions from '../../constants';
 import EmptyComponent from '../../components/EmptyComponent';
+import {deleteUser} from '../../Actions';
 
-const Listing = props => {
+const Listing = () => {
   const navigation = useNavigation();
+  const userData = useSelector(state => state?.users);
+  const dispatch = useDispatch();
 
   const [selectedItem, setSelectedItem] = useState([]);
   const [modal, setModal] = useState(false);
@@ -47,8 +49,8 @@ const Listing = props => {
   };
 
   const onDone = async () => {
-    console.log(selectedItem?.id);
-    props?.deleteUser(selectedItem?.id);
+    const id = selectedItem?.id;
+    dispatch(deleteUser(id));
     setModal(false);
   };
 
@@ -64,23 +66,12 @@ const Listing = props => {
       </TouchableOpacity>
 
       <FlatList
-        data={props?.users}
+        data={userData?.users}
         renderItem={onRenderUsers}
-        keyExtractor={(item, index) => item?.email || index}
+        keyExtractor={(item, index) => item?.id || index}
         ListEmptyComponent={<EmptyComponent loading={loading} />}
-        /*ListFooterComponent={
-          !pullToRefresh && (
-            <ListFooterComponent
-              count={count}
-              endReach={endReach}
-              loading={loading}
-            />
-          )
-        }*/
-        //refreshing={pullToRefresh}
-        //onRefresh={onRefresh}
-        //onEndReached={onEndReached}
       />
+
       <ReactNativeModal
         isVisible={modal}
         coverScreen={true}
@@ -109,11 +100,4 @@ const Listing = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  users: state?.users,
-});
-
-const mapDispatchToProps = dispatch => ({
-  deleteUser: id => dispatch({type: Actions.DELETE_USER, id}),
-});
-export default connect(mapStateToProps, mapDispatchToProps)(Listing);
+export default Listing;
